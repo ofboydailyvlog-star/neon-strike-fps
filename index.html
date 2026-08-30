@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="theme-color" content="#0a0a14">
+    <meta name="description" content="NEON STRIKE - A browser-based FPS game. Survive waves of neon enemies!">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="mobile-web-app-capable" content="yes">
+    <title>NEON STRIKE</title>
+    <link rel="manifest" href="manifest.json">
+    <link rel="apple-touch-icon" href="icons/icon-192.png">
+    <link rel="icon" type="image/png" href="icons/icon-192.png">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <!-- Loading Screen -->
+    <div id="loadingScreen" class="loading-screen">
+        <div class="loading-content">
+            <h1 class="loading-logo">NEON<span>STRIKE</span></h1>
+            <div class="loading-bar-wrapper">
+                <div class="loading-bar" id="loadingBar"></div>
+            </div>
+            <p class="loading-text" id="loadingText">Initializing...</p>
+        </div>
+    </div>
+
+    <!-- Main Menu -->
+    <div id="mainMenu" class="menu-screen hidden">
+        <div class="menu-content">
+            <h1 class="game-logo">NEON<span>STRIKE</span></h1>
+            <p class="tagline">SURVIVE THE NEON ONSLAUGHT</p>
+            <div class="high-score-display">
+                <span class="hs-label">HIGH SCORE</span>
+                <span class="hs-value" id="menuHighScore">0</span>
+            </div>
+            <button class="btn btn-primary" id="startBtn">START GAME</button>
+            <button class="btn btn-secondary" id="howToPlayBtn">HOW TO PLAY</button>
+            <div class="version">v1.0.0</div>
+        </div>
+    </div>
+
+    <!-- How to Play Modal -->
+    <div id="howToPlayModal" class="modal-overlay hidden">
+        <div class="modal">
+            <h2>HOW TO PLAY</h2>
+            <div class="instructions-grid">
+                <div class="instruction-item">
+                    <div class="key-display"><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd></div>
+                    <p>Move</p>
+                </div>
+                <div class="instruction-item">
+                    <div class="key-display"><kbd>MOUSE</kbd></div>
+                    <p>Look around</p>
+                </div>
+                <div class="instruction-item">
+                    <div class="key-display"><kbd>CLICK</kbd></div>
+                    <p>Shoot</p>
+                </div>
+                <div class="instruction-item">
+                    <div class="key-display"><kbd>R</kbd></div>
+                    <p>Reload</p>
+                </div>
+                <div class="instruction-item">
+                    <div class="key-display"><kbd>SHIFT</kbd></div>
+                    <p>Sprint</p>
+                </div>
+                <div class="instruction-item">
+                    <div class="key-display"><kbd>ESC</kbd></div>
+                    <p>Pause</p>
+                </div>
+            </div>
+            <div class="mobile-note">
+                <strong>Mobile:</strong> Left joystick to move, right side to aim, fire button to shoot.
+            </div>
+            <button class="btn btn-primary" id="closeHowToBtn">GOT IT</button>
+        </div>
+    </div>
+
+    <!-- Pause Menu -->
+    <div id="pauseMenu" class="menu-screen hidden">
+        <div class="menu-content">
+            <h1 class="game-logo small">PAUSED</h1>
+            <button class="btn btn-primary" id="resumeBtn">RESUME</button>
+            <button class="btn btn-secondary" id="quitBtn">QUIT TO MENU</button>
+        </div>
+    </div>
+
+    <!-- Game Over Screen -->
+    <div id="gameOverScreen" class="menu-screen hidden">
+        <div class="menu-content">
+            <h1 class="game-logo small">GAME OVER</h1>
+            <div class="stats-grid">
+                <div class="stat-box">
+                    <span class="stat-label">SCORE</span>
+                    <span class="stat-value" id="finalScore">0</span>
+                </div>
+                <div class="stat-box">
+                    <span class="stat-label">KILLS</span>
+                    <span class="stat-value" id="finalKills">0</span>
+                </div>
+                <div class="stat-box">
+                    <span class="stat-label">WAVE</span>
+                    <span class="stat-value" id="finalWave">1</span>
+                </div>
+                <div class="stat-box">
+                    <span class="stat-label">ACCURACY</span>
+                    <span class="stat-value" id="finalAccuracy">0%</span>
+                </div>
+            </div>
+            <div class="new-high-score hidden" id="newHighScore">NEW HIGH SCORE!</div>
+            <button class="btn btn-primary" id="restartBtn">PLAY AGAIN</button>
+            <button class="btn btn-secondary" id="menuBtn">MAIN MENU</button>
+        </div>
+    </div>
+
+    <!-- HUD -->
+    <div id="hud" class="hud hidden">
+        <!-- Crosshair -->
+        <div class="crosshair" id="crosshair">
+            <div class="crosshair-dot"></div>
+            <div class="crosshair-line crosshair-top"></div>
+            <div class="crosshair-line crosshair-bottom"></div>
+            <div class="crosshair-line crosshair-left"></div>
+            <div class="crosshair-line crosshair-right"></div>
+        </div>
+
+        <!-- Hit marker -->
+        <div class="hit-marker" id="hitMarker"></div>
+
+        <!-- Top bar -->
+        <div class="hud-top">
+            <div class="hud-stat">
+                <span class="hud-label">SCORE</span>
+                <span class="hud-value" id="hudScore">0</span>
+            </div>
+            <div class="hud-center">
+                <div class="wave-display">
+                    <span class="wave-label">WAVE</span>
+                    <span class="wave-number" id="hudWave">1</span>
+                </div>
+                <div class="enemies-remaining" id="enemiesRemaining">Enemies: 0</div>
+            </div>
+            <div class="hud-stat right">
+                <span class="hud-label">KILLS</span>
+                <span class="hud-value" id="hudKills">0</span>
+            </div>
+        </div>
+
+        <!-- Bottom bar -->
+        <div class="hud-bottom">
+            <div class="health-container">
+                <div class="health-label">HEALTH</div>
+                <div class="health-bar-wrapper">
+                    <div class="health-bar" id="healthBar"></div>
+                    <span class="health-text" id="healthText">100</span>
+                </div>
+            </div>
+            <div class="ammo-container">
+                <div class="ammo-display">
+                    <span class="ammo-current" id="ammoCurrent">30</span>
+                    <span class="ammo-separator">/</span>
+                    <span class="ammo-reserve" id="ammoReserve">90</span>
+                </div>
+                <div class="weapon-name">PULSE RIFLE</div>
+            </div>
+        </div>
+
+        <!-- Wave announcement -->
+        <div class="wave-announcement" id="waveAnnouncement">
+            <div class="wave-announce-text" id="waveAnnounceText">WAVE 1</div>
+        </div>
+
+        <!-- Damage vignette -->
+        <div class="damage-vignette" id="damageVignette"></div>
+
+        <!-- Mobile controls -->
+        <div class="mobile-controls" id="mobileControls">
+            <div class="joystick-zone" id="joystickZone">
+                <div class="joystick-base" id="joystickBase"></div>
+                <div class="joystick-thumb" id="joystickThumb"></div>
+            </div>
+            <div class="mobile-right-controls">
+                <div class="look-zone" id="lookZone"></div>
+                <button class="fire-btn" id="fireBtn"></button>
+                <button class="reload-btn-mobile" id="reloadBtnMobile">RELOAD</button>
+            </div>
+        </div>
+
+        <!-- Mobile pause -->
+        <button class="mobile-pause-btn" id="mobilePauseBtn" aria-label="Pause">||</button>
+    </div>
+
+    <!-- Click-to-play overlay -->
+    <div id="clickToPlay" class="click-to-play hidden">
+        <div class="ctp-content">
+            <p>CLICK TO PLAY</p>
+            <p class="ctp-hint">Click to lock mouse and start fighting</p>
+        </div>
+    </div>
+
+    <!-- Toast notifications -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <!-- Three.js import map -->
+    <script type="importmap">
+    {
+        "imports": {
+            "three": "https://cdn.jsdelivr.net/npm/three@0.169.0/build/three.module.js",
+            "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.169.0/examples/jsm/"
+        }
+    }
+    </script>
+
+    <!-- Main game module -->
+    <script type="module" src="js/main.js"></script>
+
+    <!-- PWA service worker -->
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('sw.js').catch(err => console.log('SW registration failed:', err));
+            });
+        }
+    </script>
+</body>
+</html>
